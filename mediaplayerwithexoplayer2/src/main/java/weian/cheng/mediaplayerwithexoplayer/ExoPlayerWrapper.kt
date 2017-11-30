@@ -20,7 +20,7 @@ import com.google.android.exoplayer2.util.Util
 
 /**
  * Created by weian on 2017/11/28.
- * 
+ *
  */
 
 class ExoPlayerWrapper(context: Context) {
