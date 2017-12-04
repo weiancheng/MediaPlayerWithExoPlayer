@@ -2,6 +2,7 @@ package weian.cheng.mediaplayerwithexoplayer
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
@@ -24,9 +25,11 @@ import com.google.android.exoplayer2.util.Util
  */
 
 class ExoPlayerWrapper(context: Context) {
+    private val TAG = "ExoPlayerWrapper"
     private var context: Context
     private lateinit var exoPlayer: SimpleExoPlayer
     private var isPlaying = false
+    private lateinit var timer: PausableTimer
 
     // listeners
     private var durationListener: (duration: Int) -> Unit = {}
@@ -100,6 +103,7 @@ class ExoPlayerWrapper(context: Context) {
     fun isPlaying(): Boolean = isPlaying
 
     private fun initExoPlayer(url: String) {
+        Log.i(TAG, "initExoPlayer")
         val meter = DefaultBandwidthMeter()
         val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, "LocalExoPlayer"), meter)
         val uri = Uri.parse(url)
@@ -130,7 +134,7 @@ class ExoPlayerWrapper(context: Context) {
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            Log.i("ExoPlayerWrapper", "onPlayerError")
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
