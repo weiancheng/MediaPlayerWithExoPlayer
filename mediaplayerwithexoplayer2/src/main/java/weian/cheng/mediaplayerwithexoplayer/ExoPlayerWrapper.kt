@@ -25,11 +25,17 @@ import com.google.android.exoplayer2.util.Util
  */
 
 class ExoPlayerWrapper(context: Context) {
+    enum class PlayerState {
+        Standby, Play, Pause
+    }
+
     private val TAG = "ExoPlayerWrapper"
     private var context: Context
     private lateinit var exoPlayer: SimpleExoPlayer
     private var isPlaying = false
     private lateinit var timer: PausableTimer
+    private var playerState = PlayerState.Standby
+
 
     // listeners
     private var durationListener: (duration: Int) -> Unit = {}
@@ -47,13 +53,16 @@ class ExoPlayerWrapper(context: Context) {
     fun play(url: String) {
         initExoPlayer(url)
         exoPlayer.playWhenReady = true
+        playerState = PlayerState.Play
     }
 
     fun play() {
         if (isPlaying) {
             timer.pause()
+            playerState = PlayerState.Pause
         } else {
             timer.resume()
+            playerState = PlayerState.Play
         }
         exoPlayer.playWhenReady = !isPlaying
     }
@@ -65,6 +74,7 @@ class ExoPlayerWrapper(context: Context) {
         exoPlayer.playWhenReady = false
         exoPlayer.release()
         timer.stop()
+        playerState = PlayerState.Standby
     }
 
     /**
@@ -73,6 +83,7 @@ class ExoPlayerWrapper(context: Context) {
     fun pause() {
         exoPlayer.playWhenReady = false
         timer.pause()
+        playerState = PlayerState.Pause
     }
 
     /**
@@ -81,6 +92,7 @@ class ExoPlayerWrapper(context: Context) {
     fun resume() {
         exoPlayer.playWhenReady = true
         timer.resume()
+        playerState = PlayerState.Play
     }
 
     /**
@@ -101,6 +113,8 @@ class ExoPlayerWrapper(context: Context) {
     }
 
     fun isPlaying(): Boolean = isPlaying
+
+    fun getPlayerState() = playerState
 
     private fun initExoPlayer(url: String) {
         Log.i(TAG, "initExoPlayer")
