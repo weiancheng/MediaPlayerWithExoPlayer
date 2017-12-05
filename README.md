@@ -12,6 +12,7 @@ allprojects {
 }
 ```
 <br>
+
 2. Add the dependency<br>
 ```gradle
 dependencies {
