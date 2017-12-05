@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import java.lang.Exception
 
 /**
  * Created by weian on 2017/11/28.
@@ -51,6 +52,10 @@ class ExoPlayerWrapper(context: Context) {
      * start playing a music. When the music is playing, user is calling again, then music will be paused.
      */
     fun play(url: String) {
+        if (playerState == PlayerState.Play) {
+            throw Exception("now is playing")
+        }
+
         initExoPlayer(url)
         exoPlayer.playWhenReady = true
         playerState = PlayerState.Play
