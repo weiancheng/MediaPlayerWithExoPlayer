@@ -53,6 +53,7 @@ class ExoPlayerWrapper(context: Context) {
      */
     fun play(url: String) {
         if (playerState == PlayerState.Play) {
+            // TODO: find out a appropriate exception or make one.
             throw Exception("now is playing")
         }
 
