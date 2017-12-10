@@ -118,8 +118,6 @@ class ExoPlayerWrapper(context: Context) {
         exoPlayer.seekTo(time.times(1000).toLong())
     }
 
-    fun isPlaying(): Boolean = isPlaying
-
     fun getPlayerState() = playerState
 
     private fun initExoPlayer(url: String) {
@@ -154,7 +152,7 @@ class ExoPlayerWrapper(context: Context) {
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
-            Log.i("ExoPlayerWrapper", "onPlayerError")
+            Log.i("ExoPlayerWrapper", "onPlayerError: " + error.toString())
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
