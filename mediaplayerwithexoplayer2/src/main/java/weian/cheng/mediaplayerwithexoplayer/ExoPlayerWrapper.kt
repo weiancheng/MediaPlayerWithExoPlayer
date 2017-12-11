@@ -24,22 +24,23 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import java.lang.Exception
 
+import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Standby
+import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Pause
+import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Play
+
 /**
  * Created by weian on 2017/11/28.
  *
  */
 
 class ExoPlayerWrapper(context: Context) {
-    enum class PlayerState {
-        Standby, Play, Pause
-    }
 
     private val TAG = "ExoPlayerWrapper"
     private var context: Context
     private lateinit var exoPlayer: SimpleExoPlayer
     private var isPlaying = false
     private lateinit var timer: PausableTimer
-    private var playerState = PlayerState.Standby
+    private var playerState = Standby
 
 
     // listeners
@@ -56,23 +57,23 @@ class ExoPlayerWrapper(context: Context) {
      * start playing a music. When the music is playing, user is calling again, then music will be paused.
      */
     fun play(url: String) {
-        if (playerState == PlayerState.Play) {
+        if (playerState == Play) {
             // TODO: find out a appropriate exception or make one.
             throw Exception("now is playing")
         }
 
         initExoPlayer(url)
         exoPlayer.playWhenReady = true
-        playerState = PlayerState.Play
+        playerState = Play
     }
 
     fun play() {
         if (isPlaying) {
             timer.pause()
-            playerState = PlayerState.Pause
+            playerState = Pause
         } else {
             timer.resume()
-            playerState = PlayerState.Play
+            playerState = Play
         }
         exoPlayer.playWhenReady = !isPlaying
     }
@@ -84,7 +85,7 @@ class ExoPlayerWrapper(context: Context) {
         exoPlayer.playWhenReady = false
         exoPlayer.release()
         timer.stop()
-        playerState = PlayerState.Standby
+        playerState = Standby
     }
 
     /**
@@ -93,7 +94,7 @@ class ExoPlayerWrapper(context: Context) {
     fun pause() {
         exoPlayer.playWhenReady = false
         timer.pause()
-        playerState = PlayerState.Pause
+        playerState = Pause
     }
 
     /**
@@ -102,7 +103,7 @@ class ExoPlayerWrapper(context: Context) {
     fun resume() {
         exoPlayer.playWhenReady = true
         timer.resume()
-        playerState = PlayerState.Play
+        playerState = Play
     }
 
     /**
@@ -163,7 +164,7 @@ class ExoPlayerWrapper(context: Context) {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             musicPlayer.isPlaying = playWhenReady
             if (playbackState == STATE_ENDED) {
-                musicPlayer.playerState = PlayerState.Standby
+                musicPlayer.playerState = Standby
             }
         }
 
