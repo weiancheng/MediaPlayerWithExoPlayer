@@ -8,6 +8,10 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Player.STATE_BUFFERING
+import com.google.android.exoplayer2.Player.STATE_ENDED
+import com.google.android.exoplayer2.Player.STATE_IDLE
+import com.google.android.exoplayer2.Player.STATE_READY
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -149,14 +153,18 @@ class ExoPlayerWrapper(context: Context) {
         }
 
         override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
-            Log.i("ExoPlayerWrapper", "onPlayerError: " + error.toString())
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             musicPlayer.isPlaying = playWhenReady
+            if (playbackState == STATE_ENDED) {
+                musicPlayer.playerState = PlayerState.Standby
+            }
         }
 
         override fun onLoadingChanged(isLoading: Boolean) {
