@@ -33,7 +33,7 @@ import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Play
  *
  */
 
-class ExoPlayerWrapper(context: Context) {
+class ExoPlayerWrapper(context: Context): IMusicPlayer {
 
     private val TAG = "ExoPlayerWrapper"
     private var context: Context
@@ -48,26 +48,34 @@ class ExoPlayerWrapper(context: Context) {
     private var bufferPercentage: (percent: Int) -> Unit = {}
     private var currentTime: (time: Int) -> Unit = {}
 
-
     init {
         this.context = context
     }
 
-    /**
-     * start playing a music. When the music is playing, user is calling again, then music will be paused.
-     */
-    fun play(url: String) {
+    override fun play(uri: String) {
         if (playerState == Play) {
             // TODO: find out a appropriate exception or make one.
             throw Exception("now is playing")
         }
 
-        initExoPlayer(url)
+        initExoPlayer(uri)
         exoPlayer.playWhenReady = true
         playerState = Play
     }
 
-    fun play() {
+    override fun play() {
+        when (isPlaying) {
+            true -> {
+                timer.pause()
+                playerState = Pause
+            }
+
+            false -> {
+                timer.resume()
+                playerState = Play
+            }
+        }
+
         if (isPlaying) {
             timer.pause()
             playerState = Pause
@@ -78,52 +86,37 @@ class ExoPlayerWrapper(context: Context) {
         exoPlayer.playWhenReady = !isPlaying
     }
 
-    /**
-     * stop playing the music.
-     */
-    fun stop() {
+    override fun stop() {
         exoPlayer.playWhenReady = false
         exoPlayer.release()
         timer.stop()
         playerState = Standby
     }
 
-    /**
-     * pause a music. If no music is played, nothing to do.
-     */
-    fun pause() {
+    override fun pause() {
         exoPlayer.playWhenReady = false
         timer.pause()
         playerState = Pause
     }
 
-    /**
-     * resume the playing of the music.
-     */
-    fun resume() {
+    override fun resume() {
         exoPlayer.playWhenReady = true
         timer.resume()
         playerState = Play
     }
 
-    /**
-     * set the repeat mode: normal play, repeat one music, repeat the whole playlist
-     */
-    fun repeat(isRepeat: Boolean) {
+    override fun setRepeat(isRepeat: Boolean) {
         if (isRepeat)
             exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
         else
             exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
     }
 
-    /**
-     * seek the play time when the music is playing
-     */
-    fun seekTo(time: Int) {
-        exoPlayer.seekTo(time.times(1000).toLong())
+    override fun seekTo(sec: Int) {
+        exoPlayer.seekTo(sec.times(1000).toLong())
     }
 
-    fun getPlayerState() = playerState
+    override fun getPlayerState() = playerState
 
     private fun initExoPlayer(url: String) {
         Log.i(TAG, "initExoPlayer")
