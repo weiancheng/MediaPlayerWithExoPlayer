@@ -52,4 +52,11 @@ interface IMusicPlayer {
      * Pause: the music player is pausing.
      */
     fun getPlayerState(): MusicPlayerState
+
+    /**
+     * The function is used to write the media file to local storage if the music player get the complete file.
+     * Return true is that writing file successful.
+     * Return false is that writing file unsuccessful.
+     */
+    fun writeToFile(uri: String): Boolean
 }
