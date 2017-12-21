@@ -45,12 +45,6 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
 
     private var listener: PlayerEventListenerImpl ?= null
 
-
-    // listeners
-    private var durationListener: (duration: Int) -> Unit = {}
-    private var bufferPercentage: (percent: Int) -> Unit = {}
-    private var currentTime: (time: Int) -> Unit = {}
-
     init {
         this.context = context
     }
@@ -63,49 +57,49 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
 
         initExoPlayer(uri)
         exoPlayer.playWhenReady = true
-        playerState = Play
+        setPlayerState(Play)
     }
 
     override fun play() {
         when (isPlaying) {
             true -> {
                 timer.pause()
-                playerState = Pause
+                setPlayerState(Pause)
             }
 
             false -> {
                 timer.resume()
-                playerState = Play
+                setPlayerState(Play)
             }
         }
 
         if (isPlaying) {
             timer.pause()
-            playerState = Pause
+            setPlayerState(Pause)
         } else {
             timer.resume()
-            playerState = Play
+            setPlayerState(Play)
         }
         exoPlayer.playWhenReady = !isPlaying
     }
 
     override fun stop() {
         exoPlayer.playWhenReady = false
-        exoPlayer.release()
+        exoPlayer.stop()
         timer.stop()
-        playerState = Standby
+        setPlayerState(Standby)
     }
 
     override fun pause() {
         exoPlayer.playWhenReady = false
         timer.pause()
-        playerState = Pause
+        setPlayerState(Pause)
     }
 
     override fun resume() {
         exoPlayer.playWhenReady = true
         timer.resume()
-        playerState = Play
+        setPlayerState(Play)
     }
 
     override fun setRepeat(isRepeat: Boolean) {
@@ -129,8 +123,11 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         this.listener = listener
     }
 
-    fun setCallBack(listener: PlayerEventListenerImpl) {
-        this.listener = listener
+    private fun setPlayerState(state: MusicPlayerState) {
+        if (state != playerState) {
+            playerState = state
+            listener?.onPlayerStateChanged(state)
+        }
     }
 
     private fun initExoPlayer(url: String) {
@@ -171,12 +168,12 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             musicPlayer.isPlaying = playWhenReady
             if (playbackState == STATE_ENDED) {
-                musicPlayer.playerState = Standby
+                musicPlayer.setPlayerState(Standby)
             }
         }
 
         override fun onLoadingChanged(isLoading: Boolean) {
-            musicPlayer.bufferPercentage(exoPlayer.bufferedPercentage)
+            musicPlayer.listener?.onBufferPercentage(exoPlayer.bufferedPercentage)
         }
 
         override fun onPositionDiscontinuity() {
@@ -189,16 +186,15 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
 
         override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
             if (exoPlayer.duration > 0) {
-                musicPlayer.durationListener(exoPlayer.duration.div(1000).toInt())
                 musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(1000).toInt())
             }
 
-            musicPlayer.timer = PausableTimer(exoPlayer.duration, 1)
+            musicPlayer.timer = PausableTimer(exoPlayer.duration, 1000)
             musicPlayer.timer.onTick = { millisUntilFinished ->
-                musicPlayer.currentTime(millisUntilFinished.div(1000).toInt())
+                musicPlayer.listener?.onCurrentTime(millisUntilFinished.div(1000).toInt())
             }
             musicPlayer.timer.onFinish = {
-                musicPlayer.currentTime(exoPlayer.duration.div(1000).toInt())
+                musicPlayer.listener?.onCurrentTime(exoPlayer.duration.div(1000).toInt())
             }
             musicPlayer.timer.start()
         }
