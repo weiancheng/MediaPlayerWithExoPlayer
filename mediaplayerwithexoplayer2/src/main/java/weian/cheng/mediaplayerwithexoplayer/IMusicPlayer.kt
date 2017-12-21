@@ -59,4 +59,10 @@ interface IMusicPlayer {
      * Return false is that writing file unsuccessful.
      */
     fun writeToFile(uri: String): Boolean
+
+    /**
+     * The function is used to set up an event listener which monitor the activity of music player.
+     *
+     */
+    fun setEventListener(listener: ExoPlayerEventListener.PlayerEventListenerImpl)
 }

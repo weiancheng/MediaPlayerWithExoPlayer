@@ -22,6 +22,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import weian.cheng.mediaplayerwithexoplayer.ExoPlayerEventListener.PlayerEventListenerImpl
 import java.lang.Exception
 
 import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Standby
@@ -41,6 +42,8 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
     private var isPlaying = false
     private lateinit var timer: PausableTimer
     private var playerState = Standby
+
+    private var listener: PlayerEventListenerImpl ?= null
 
 
     // listeners
@@ -118,6 +121,18 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
 
     override fun getPlayerState() = playerState
 
+    override fun writeToFile(uri: String): Boolean {
+        return true
+    }
+
+    override fun setEventListener(listener: PlayerEventListenerImpl) {
+        this.listener = listener
+    }
+
+    fun setCallBack(listener: PlayerEventListenerImpl) {
+        this.listener = listener
+    }
+
     private fun initExoPlayer(url: String) {
         Log.i(TAG, "initExoPlayer")
         val meter = DefaultBandwidthMeter()
@@ -147,7 +162,6 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         }
 
         override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
@@ -176,6 +190,7 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
             if (exoPlayer.duration > 0) {
                 musicPlayer.durationListener(exoPlayer.duration.div(1000).toInt())
+                musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(1000).toInt())
             }
 
             musicPlayer.timer = PausableTimer(exoPlayer.duration, 1)
