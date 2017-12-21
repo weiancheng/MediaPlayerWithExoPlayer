@@ -64,5 +64,5 @@ interface IMusicPlayer {
      * The function is used to set up an event listener which monitor the activity of music player.
      *
      */
-    fun setEventListener(listener: ExoPlayerEventListener.PlayerEventListenerImpl)
+    fun setEventListener(listener: ExoPlayerEventListener.PlayerEventListener)
 }

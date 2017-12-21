@@ -21,7 +21,7 @@ class MainActivity:AppCompatActivity() {
     private val permissionsStorage: Array<String> = arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE)
     private val permissionsRequestCode = 1
 
-    var listener = ExoPlayerEventListener.PlayerEventListenerImpl {
+    var listener = ExoPlayerEventListener.PlayerEventListener {
         onDurationChanged = { duration ->
             Log.i("MainActivity", "onDurationChanged: $duration")
         }

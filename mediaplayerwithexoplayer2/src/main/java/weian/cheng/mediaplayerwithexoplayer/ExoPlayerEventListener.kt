@@ -21,7 +21,7 @@ class ExoPlayerEventListener {
         var onPlayerStateChanged: ((state: MusicPlayerState) -> Unit)? = null
     }
 
-    class PlayerEventListenerImpl(func: PlayerEventListenerFunc.() -> Unit): IEventListener {
+    class PlayerEventListener(func: PlayerEventListenerFunc.() -> Unit): IEventListener {
 
         private var func = PlayerEventListenerFunc().apply(func)
 

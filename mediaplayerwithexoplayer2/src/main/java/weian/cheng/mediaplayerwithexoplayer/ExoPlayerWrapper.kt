@@ -22,7 +22,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
-import weian.cheng.mediaplayerwithexoplayer.ExoPlayerEventListener.PlayerEventListenerImpl
+import weian.cheng.mediaplayerwithexoplayer.ExoPlayerEventListener.PlayerEventListener
 import java.lang.Exception
 
 import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Standby
@@ -43,7 +43,7 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
     private lateinit var timer: PausableTimer
     private var playerState = Standby
 
-    private var listener: PlayerEventListenerImpl ?= null
+    private var listener: PlayerEventListener ?= null
 
     init {
         this.context = context
@@ -119,7 +119,7 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         return true
     }
 
-    override fun setEventListener(listener: PlayerEventListenerImpl) {
+    override fun setEventListener(listener: PlayerEventListener) {
         this.listener = listener
     }
 
