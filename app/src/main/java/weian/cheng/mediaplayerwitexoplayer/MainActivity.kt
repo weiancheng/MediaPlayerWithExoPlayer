@@ -6,8 +6,11 @@ import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.util.Log
 import android.widget.Button
+import weian.cheng.mediaplayerwithexoplayer.ExoPlayerEventListener
 import weian.cheng.mediaplayerwithexoplayer.ExoPlayerWrapper
+import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState
 
 class MainActivity:AppCompatActivity() {
     private val url = "https://soundsthatmatterblog.files.wordpress.com/2012/12/04-just-give-me-a-reason-feat-nate-ruess.mp3"
@@ -18,12 +21,32 @@ class MainActivity:AppCompatActivity() {
     private val permissionsStorage: Array<String> = arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE)
     private val permissionsRequestCode = 1
 
+    var listener = ExoPlayerEventListener.PlayerEventListenerImpl {
+        onDurationChanged = { duration ->
+            Log.i("MainActivity", "onDurationChanged: $duration")
+        }
+
+        onCurrentTime = { sec ->
+            Log.i("MainActivity", "onCurrentTime: $sec")
+        }
+
+        onBufferPercentage = { percent ->
+            Log.i("MainActivity", "onBufferPercentage: $percent")
+        }
+
+        onPlayerStateChanged = { state ->
+            Log.i("MainActivity", "onPlayerStateChanged: $state")
+        }
+    }
+
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requirePermission()
 
         player = ExoPlayerWrapper(this.applicationContext)
+
+        player.setEventListener(listener)
 
         var play = findViewById<Button>(R.id.btn_play) as Button
         play.setOnClickListener { view ->
@@ -37,7 +60,7 @@ class MainActivity:AppCompatActivity() {
 
         var next = findViewById<Button>(R.id.btn_next) as Button
         next.setOnClickListener { view ->
-            if (player.getPlayerState() == ExoPlayerWrapper.PlayerState.Play) {
+            if (player.getPlayerState() == MusicPlayerState.Play) {
                 player.stop()
             }
             player.play(local)
@@ -45,7 +68,7 @@ class MainActivity:AppCompatActivity() {
 
         var previous = findViewById<Button>(R.id.btn_prev) as Button
         previous.setOnClickListener { view ->
-            if (player.getPlayerState() == ExoPlayerWrapper.PlayerState.Play) {
+            if (player.getPlayerState() == MusicPlayerState.Play) {
                 player.stop()
             }
             player.play(url)
@@ -60,5 +83,4 @@ class MainActivity:AppCompatActivity() {
                     permissionsStorage, permissionsRequestCode)
         }
     }
-
 }
