@@ -8,10 +8,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.STATE_BUFFERING
 import com.google.android.exoplayer2.Player.STATE_ENDED
-import com.google.android.exoplayer2.Player.STATE_IDLE
-import com.google.android.exoplayer2.Player.STATE_READY
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -23,11 +20,10 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import weian.cheng.mediaplayerwithexoplayer.ExoPlayerEventListener.PlayerEventListener
-import java.lang.Exception
-
-import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Standby
 import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Pause
 import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Play
+import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Standby
+import java.lang.Exception
 
 /**
  * Created by weian on 2017/11/28.
@@ -155,14 +151,12 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         }
 
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -177,24 +171,25 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         }
 
         override fun onPositionDiscontinuity() {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
+            val millis = 1000
+
             if (exoPlayer.duration > 0) {
-                musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(1000).toInt())
+                musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(millis).toInt())
             }
 
-            musicPlayer.timer = PausableTimer(exoPlayer.duration, 1000)
+            musicPlayer.timer = PausableTimer(exoPlayer.duration, millis.toLong())
             musicPlayer.timer.onTick = { millisUntilFinished ->
-                musicPlayer.listener?.onCurrentTime(millisUntilFinished.div(1000).toInt())
+                val time = (exoPlayer.duration - millisUntilFinished).div(millis).toInt()
+                musicPlayer.listener?.onCurrentTime(time)
             }
             musicPlayer.timer.onFinish = {
-                musicPlayer.listener?.onCurrentTime(exoPlayer.duration.div(1000).toInt())
+                musicPlayer.listener?.onCurrentTime(exoPlayer.duration.div(millis).toInt())
             }
             musicPlayer.timer.start()
         }
