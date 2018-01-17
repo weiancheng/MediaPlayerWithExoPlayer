@@ -167,16 +167,16 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
         override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
             if (exoPlayer.duration > 0) {
                 musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(1000).toInt())
-            }
 
-            musicPlayer.timer = PausableTimer(exoPlayer.duration, 1000)
-            musicPlayer.timer.onTick = { millisUntilFinished ->
-                musicPlayer.listener?.onCurrentTime(millisUntilFinished.div(1000).toInt())
+                musicPlayer.timer = PausableTimer(exoPlayer.duration.minus(exoPlayer.currentPosition), 1000)
+                musicPlayer.timer.onTick = { millisUntilFinished ->
+                    musicPlayer.listener?.onCurrentTime(millisUntilFinished.div(1000).toInt())
+                }
+                musicPlayer.timer.onFinish = {
+                    musicPlayer.listener?.onCurrentTime(0)
+                }
+                musicPlayer.timer.start()
             }
-            musicPlayer.timer.onFinish = {
-                musicPlayer.listener?.onCurrentTime(0)
-            }
-            musicPlayer.timer.start()
         }
     }
 }
