@@ -155,14 +155,12 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         }
 
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onTracksChanged(trackGroups: TrackGroupArray?, trackSelections: TrackSelectionArray?) {
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -177,11 +175,9 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         }
 
         override fun onPositionDiscontinuity() {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
