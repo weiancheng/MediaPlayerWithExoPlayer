@@ -190,7 +190,7 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
                 musicPlayer.listener?.onCurrentTime(millisUntilFinished.div(1000).toInt())
             }
             musicPlayer.timer.onFinish = {
-                musicPlayer.listener?.onCurrentTime(exoPlayer.duration.div(1000).toInt())
+                musicPlayer.listener?.onCurrentTime(0)
             }
             musicPlayer.timer.start()
         }
