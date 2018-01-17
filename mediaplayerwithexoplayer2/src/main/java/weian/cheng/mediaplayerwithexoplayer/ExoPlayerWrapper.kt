@@ -8,10 +8,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.STATE_BUFFERING
 import com.google.android.exoplayer2.Player.STATE_ENDED
-import com.google.android.exoplayer2.Player.STATE_IDLE
-import com.google.android.exoplayer2.Player.STATE_READY
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
@@ -34,20 +31,15 @@ import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Play
  *
  */
 
-class ExoPlayerWrapper(context: Context): IMusicPlayer {
+class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
 
-    private val TAG = "ExoPlayerWrapper"
-    private var context: Context
+    private val tag = "ExoPlayerWrapper"
     private lateinit var exoPlayer: SimpleExoPlayer
     private var isPlaying = false
     private lateinit var timer: PausableTimer
     private var playerState = Standby
 
     private var listener: PlayerEventListener ?= null
-
-    init {
-        this.context = context
-    }
 
     override fun play(uri: String) {
         if (playerState == Play) {
@@ -131,7 +123,7 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
     }
 
     private fun initExoPlayer(url: String) {
-        Log.i(TAG, "initExoPlayer")
+        Log.i(tag, "initExoPlayer")
         val meter = DefaultBandwidthMeter()
         val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, "LocalExoPlayer"), meter)
         val uri = Uri.parse(url)
@@ -143,16 +135,8 @@ class ExoPlayerWrapper(context: Context): IMusicPlayer {
         exoPlayer.prepare(extractorMediaSource)
     }
 
-    private class LocalPlayerEventListener(player: ExoPlayerWrapper,
-                                           exoplayer: ExoPlayer): Player.EventListener {
-
-        private var exoPlayer: ExoPlayer
-        private var musicPlayer: ExoPlayerWrapper
-
-        init {
-            exoPlayer = exoplayer
-            musicPlayer = player
-        }
+    private class LocalPlayerEventListener(private val musicPlayer: ExoPlayerWrapper,
+                                           private val exoPlayer: ExoPlayer): Player.EventListener {
 
         override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
         }
