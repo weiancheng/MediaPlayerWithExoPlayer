@@ -170,13 +170,13 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
             if (exoPlayer.duration in 1..threshold) {
                 musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(millis).toInt())
 
-                musicPlayer.timer = PausableTimer(exoPlayer.duration, millis.toLong())
+                musicPlayer.timer = PausableTimer(exoPlayer.duration.minus(exoPlayer.currentPosition), millis.toLong())
                 musicPlayer.timer.onTick = { millisUntilFinished ->
                     val time = (exoPlayer.duration - millisUntilFinished).div(millis).toInt()
                     musicPlayer.listener?.onCurrentTime(time)
                 }
                 musicPlayer.timer.onFinish = {
-                    musicPlayer.listener?.onCurrentTime(exoPlayer.duration.div(millis).toInt())
+                    musicPlayer.listener?.onCurrentTime(0)
                 }
                 musicPlayer.timer.start()
             }
