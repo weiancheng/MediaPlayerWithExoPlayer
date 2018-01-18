@@ -165,19 +165,21 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
 
         override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
             val millis = 1000
+            val threshold = 1000_000  // Avoiding the bigger timeline comes, cause the running time is incorrect.
 
-            if (exoPlayer.duration > 0) {
+            if (exoPlayer.duration in 1..threshold) {
                 musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(millis).toInt())
 
-            musicPlayer.timer = PausableTimer(exoPlayer.duration, millis.toLong())
-            musicPlayer.timer.onTick = { millisUntilFinished ->
-                val time = (exoPlayer.duration - millisUntilFinished).div(millis).toInt()
-                musicPlayer.listener?.onCurrentTime(time)
+                musicPlayer.timer = PausableTimer(exoPlayer.duration, millis.toLong())
+                musicPlayer.timer.onTick = { millisUntilFinished ->
+                    val time = (exoPlayer.duration - millisUntilFinished).div(millis).toInt()
+                    musicPlayer.listener?.onCurrentTime(time)
+                }
+                musicPlayer.timer.onFinish = {
+                    musicPlayer.listener?.onCurrentTime(exoPlayer.duration.div(millis).toInt())
+                }
+                musicPlayer.timer.start()
             }
-            musicPlayer.timer.onFinish = {
-                musicPlayer.listener?.onCurrentTime(exoPlayer.duration.div(millis).toInt())
-            }
-            musicPlayer.timer.start()
         }
     }
 }
