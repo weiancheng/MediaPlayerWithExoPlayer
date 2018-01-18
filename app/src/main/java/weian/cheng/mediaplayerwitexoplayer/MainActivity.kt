@@ -21,7 +21,7 @@ class MainActivity:AppCompatActivity() {
     private val permissionsStorage: Array<String> = arrayOf(WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE)
     private val permissionsRequestCode = 1
 
-    var listener = ExoPlayerEventListener.PlayerEventListener {
+    private var listener = ExoPlayerEventListener.PlayerEventListener {
         onDurationChanged = { duration ->
             Log.i("MainActivity", "onDurationChanged: $duration")
         }
@@ -48,17 +48,17 @@ class MainActivity:AppCompatActivity() {
 
         player.setEventListener(listener)
 
-        var play = findViewById<Button>(R.id.btn_play) as Button
+        val play = findViewById<Button>(R.id.btn_play) as Button
         play.setOnClickListener { view ->
             player.play(url)
         }
 
-        var stop = findViewById<Button>(R.id.btn_stop) as Button
+        val stop = findViewById<Button>(R.id.btn_stop) as Button
         stop.setOnClickListener { view ->
             player.stop()
         }
 
-        var next = findViewById<Button>(R.id.btn_next) as Button
+        val next = findViewById<Button>(R.id.btn_next) as Button
         next.setOnClickListener { view ->
             if (player.getPlayerState() == MusicPlayerState.Play) {
                 player.stop()
@@ -66,7 +66,7 @@ class MainActivity:AppCompatActivity() {
             player.play(local)
         }
 
-        var previous = findViewById<Button>(R.id.btn_prev) as Button
+        val previous = findViewById<Button>(R.id.btn_prev) as Button
         previous.setOnClickListener { view ->
             if (player.getPlayerState() == MusicPlayerState.Play) {
                 player.stop()
