@@ -20,11 +20,10 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import weian.cheng.mediaplayerwithexoplayer.ExoPlayerEventListener.PlayerEventListener
-import java.lang.Exception
-
-import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Standby
 import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Pause
 import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Play
+import weian.cheng.mediaplayerwithexoplayer.MusicPlayerState.Standby
+import java.lang.Exception
 
 /**
  * Created by weian on 2017/11/28.
@@ -165,12 +164,16 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
         }
 
         override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {
-            if (exoPlayer.duration > 0) {
-                musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(1000).toInt())
+            val millis = 1000
+            val threshold = 1000_000  // Avoiding the bigger timeline comes, cause the running time is incorrect.
 
-                musicPlayer.timer = PausableTimer(exoPlayer.duration.minus(exoPlayer.currentPosition), 1000)
+            if (exoPlayer.duration in 1..threshold) {
+                musicPlayer.listener?.onDurationChanged(exoPlayer.duration.div(millis).toInt())
+
+                musicPlayer.timer = PausableTimer(exoPlayer.duration.minus(exoPlayer.currentPosition), millis.toLong())
                 musicPlayer.timer.onTick = { millisUntilFinished ->
-                    musicPlayer.listener?.onCurrentTime(millisUntilFinished.div(1000).toInt())
+                    val time = (exoPlayer.duration - millisUntilFinished).div(millis).toInt()
+                    musicPlayer.listener?.onCurrentTime(time)
                 }
                 musicPlayer.timer.onFinish = {
                     musicPlayer.listener?.onCurrentTime(0)
