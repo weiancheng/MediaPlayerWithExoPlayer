@@ -1,6 +1,7 @@
 package weian.cheng.mediaplayerwithexoplayer
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.util.Log
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -40,7 +41,10 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
 
     private var listener: PlayerEventListener ?= null
 
-    override fun play(uri: String) {
+    override fun play(uri: String): Boolean {
+        if (!isNetworkAvailable())
+            return false
+
         if (playerState == Play) {
             // TODO: find out a appropriate exception or make one.
             throw Exception("now is playing")
@@ -49,9 +53,10 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
         initExoPlayer(uri)
         exoPlayer.playWhenReady = true
         setPlayerState(Play)
+        return true
     }
 
-    override fun play() {
+    override fun play(): Boolean {
         when (isPlaying) {
             true -> {
                 timer.pause()
@@ -72,6 +77,7 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
             setPlayerState(Play)
         }
         exoPlayer.playWhenReady = !isPlaying
+        return true
     }
 
     override fun stop() {
@@ -106,7 +112,9 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
 
     override fun getPlayerState() = playerState
 
-    override fun writeToFile(uri: String): Boolean {
+    override fun writeToFile(url: String, filePath: String): Boolean {
+        val downloadThread = DownloadHandler(url, filePath, listener)
+        downloadThread.start()
         return true
     }
 
@@ -119,6 +127,14 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
             playerState = state
             listener?.onPlayerStateChanged(state)
         }
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager.activeNetworkInfo == null) {
+            return false
+        }
+        return true
     }
 
     private fun initExoPlayer(url: String) {

@@ -37,6 +37,10 @@ class MainActivity:AppCompatActivity() {
         onPlayerStateChanged = { state ->
             Log.i("MainActivity", "onPlayerStateChanged: $state")
         }
+
+        onDownloadTrack = { isSuccess ->
+            Log.i("MainActivity", "onDownloadTrack: $isSuccess")
+        }
     }
 
     override fun onCreate(savedInstanceState:Bundle?) {
@@ -51,6 +55,12 @@ class MainActivity:AppCompatActivity() {
         val play = findViewById<Button>(R.id.btn_play) as Button
         play.setOnClickListener { view ->
             player.play(url)
+            if (player.writeToFile(url, local)) {
+                Log.i("Weian", "play button, url is valid")
+            } else {
+                Log.i("Weian", "play button, url is not valid")
+            }
+            player.seekTo(220)
         }
 
         val stop = findViewById<Button>(R.id.btn_stop) as Button

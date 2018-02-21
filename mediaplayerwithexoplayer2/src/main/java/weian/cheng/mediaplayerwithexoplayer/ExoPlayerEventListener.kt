@@ -12,6 +12,7 @@ class ExoPlayerEventListener {
         fun onBufferPercentage(percent: Int)
         fun onCurrentTime(second: Int)
         fun onPlayerStateChanged(state: MusicPlayerState)
+        fun onDownloadTrack(isSuccess: Boolean)
     }
 
     class PlayerEventListenerFunc {
@@ -19,6 +20,7 @@ class ExoPlayerEventListener {
         var onBufferPercentage: ((percent: Int) -> Unit)? = null
         var onCurrentTime: ((second: Int) -> Unit)? = null
         var onPlayerStateChanged: ((state: MusicPlayerState) -> Unit)? = null
+        var onDownloadTrack: ((isSuccess: Boolean) -> Int)? = null
     }
 
     class PlayerEventListener(func: PlayerEventListenerFunc.() -> Unit): IEventListener {
@@ -39,6 +41,10 @@ class ExoPlayerEventListener {
 
         override fun onPlayerStateChanged(state: MusicPlayerState) {
             func.onPlayerStateChanged?.invoke(state)
+        }
+
+        override fun onDownloadTrack(isSuccess: Boolean) {
+            func.onDownloadTrack?.invoke(isSuccess)
         }
     }
 }

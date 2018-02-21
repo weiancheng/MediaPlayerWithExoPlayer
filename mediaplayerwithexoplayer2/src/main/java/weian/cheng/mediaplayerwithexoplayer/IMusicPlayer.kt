@@ -10,15 +10,17 @@ interface IMusicPlayer {
     /**
      * Start playing a music.
      * This function will play the music which is specified with an URI.
+     * If playing is failed, the function returns false.
      */
-    fun play(uri: String)
+    fun play(uri: String): Boolean
 
     /**
      * This function is also about play the music, but when the music is playing,
      * executing this function will pause the music.
      * If the music is pausing, executing this function will resume the music.
+     * If playing is failed, the function returns false.
      */
-    fun play()
+    fun play(): Boolean
 
     /**
      * stop playing the music.
@@ -58,7 +60,7 @@ interface IMusicPlayer {
      * Return true is that writing file successful.
      * Return false is that writing file unsuccessful.
      */
-    fun writeToFile(uri: String): Boolean
+    fun writeToFile(url: String, filePath: String): Boolean
 
     /**
      * The function is used to set up an event listener which monitor the activity of music player.
