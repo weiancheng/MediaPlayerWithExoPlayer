@@ -9,18 +9,18 @@ import java.net.HttpURLConnection
 import java.net.URL
 import android.os.Environment.DIRECTORY_MUSIC
 
-class DownloadHandler(private val url: String, filePath: String, private val eventListener: ExoPlayerEventListener.PlayerEventListener? = null) : Thread() {
+class DownloadHandler(private val url: String, filePath: String? = null, private val eventListener: ExoPlayerEventListener.PlayerEventListener? = null) : Thread() {
     private val tag = "DownloadHandler"
     private val bufferSize = 2048
     private val tempTrackName = "temp_track.mp3"
     private val tempTrackPath = Environment.getExternalStorageDirectory().toString() + "/" + DIRECTORY_MUSIC + "/" + tempTrackName
     private var totalSize: Int = -1
-    private var path: String = ""
+    private var path: String? = null
     private var file: File? = null
     private var listener: ExoPlayerEventListener.PlayerEventListener? = null
 
     init {
-        when (filePath.isEmpty()) {
+        when (filePath.isNullOrEmpty()) {
             true -> path = tempTrackPath
             false -> path = filePath
         }

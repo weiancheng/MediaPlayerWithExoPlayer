@@ -112,9 +112,9 @@ class ExoPlayerWrapper(private val context: Context): IMusicPlayer {
 
     override fun getPlayerState() = playerState
 
-    override fun writeToFile(url: String, filePath: String): Boolean {
-        val downloadThread = DownloadHandler(url, filePath, listener)
-        downloadThread.start()
+    override fun writeToFile(url: String, filePath: String?): Boolean {
+        val downloadHandler = DownloadHandler(url, filePath, listener)
+        downloadHandler.start()
         return true
     }
 

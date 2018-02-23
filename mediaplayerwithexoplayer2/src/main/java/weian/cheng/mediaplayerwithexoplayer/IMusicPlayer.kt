@@ -60,7 +60,7 @@ interface IMusicPlayer {
      * Return true is that writing file successful.
      * Return false is that writing file unsuccessful.
      */
-    fun writeToFile(url: String, filePath: String): Boolean
+    fun writeToFile(url: String, filePath: String? = null): Boolean
 
     /**
      * The function is used to set up an event listener which monitor the activity of music player.
